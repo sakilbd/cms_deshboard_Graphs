@@ -119,3 +119,7 @@ $fire = mysqli_query($con, $sql);
 hi you fucking shit :/ change 1
 
 hi you fuckign shit change 2
+
+
+
+are you seriously fuckign kidding me 
