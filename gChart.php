@@ -56,7 +56,7 @@ $fire = mysqli_query($con, $sql);
                 }
                     if(isset($_GET)){
                         if(isset($_POST)){
-                        $sql = "SELECT * FROM `cms` where device_id='$div' AND DATE(updated_at) between '$a' and '$b'  ";}
+                        $sql = "SELECT * FROM `cms` where device_id='$div' AND DATE(updated_at) between '$a' and '$b' LIMIT 100  ";}
                         else{
 
                         } }
