@@ -3,6 +3,8 @@ $con = mysqli_connect("localhost",'root','','aqualnbn_cms');
 
 if($con){
     echo "connected to aqualnbn_cms Database";
+
+    echo 'hi whats up man';
 }
 
 
