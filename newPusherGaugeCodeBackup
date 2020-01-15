@@ -1,0 +1,599 @@
+@extends('layouts.master')
+
+@section('title', 'CMS | Dashboard')
+
+@section('css')
+    <style type="text/css">
+
+
+        .onoffswitch {
+            position: relative; width: 90px;
+            -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+            margin: auto;
+        }
+        .onoffswitch-checkbox {
+            display: none;
+
+        }
+        .onoffswitch-label {
+            display: block; overflow: hidden; cursor: pointer;
+            border: 2px solid #FFFFFF; border-radius: 20px;
+            pointer-events: none !important;
+        }
+        .onoffswitch-inner {
+            display: block; width: 200%; margin-left: -100%;
+            transition: margin 0.3s ease-in 0s;
+        }
+        .onoffswitch-inner:before, .onoffswitch-inner:after {
+            display: block; float: left; width: 50%; height: 23px; padding: 0; line-height: 23px;
+            font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+            box-sizing: border-box;
+        }
+        .onoffswitch-inner:before {
+            content: "OPEN";
+            background-color: #00bb5a; color: #FFFFFF;
+        }
+        .onoffswitch-inner:after {
+            content: "CLOSE";
+            padding-right: 10px;
+            background-color: #FF7F7F; color: #FFFFFF;
+            text-align: right;
+        }
+        .onoffswitch-switch {
+            display: block; margin: 5.5px;
+            background: #FFFFFF;
+            position: absolute; top: 0; bottom: 0;
+            right: 60px;
+            border: 2px solid #FFFFFF; border-radius: 20px;
+            transition: all 0.3s ease-in 0s;
+        }
+        .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+            margin-left: 0;
+        }
+        .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+            right: 0px;
+        }
+
+        .flex-center{
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+
+        .led {
+            margin-left: 5px;
+            margin-right: 5px;
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        .led-green-off {
+            background-color: #a9a9a9;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #ffffff 0 2px 12px;
+        }
+
+        .led-green-on {
+            background-color: #1dff36;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #41ad2b 0 -1px 9px, #4aff7d 0 2px 12px;
+        }
+
+        .led-red-off {
+            background-color: #a06e6e;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #ffffff 0 2px 12px;
+        }
+
+        .led-red-on{
+            background-color: #ff8989;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #ff0000 0 -1px 9px, #ff0000 0 2px 12px;
+        }
+
+        .led-yellow-off{
+            background-color: #565544;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #ffffff 0 2px 12px;
+        }
+
+
+        .led-yellow-blink {
+            background-color: #FF0;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 12px;
+            -webkit-animation: blinkYellow 1s infinite;
+            -moz-animation: blinkYellow 1s infinite;
+            -ms-animation: blinkYellow 1s infinite;
+            -o-animation: blinkYellow 1s infinite;
+            animation: blinkYellow 1s infinite;
+        }
+
+        @-webkit-keyframes blinkYellow {
+            from { background-color: #FF0; }
+            50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #0e0e0e 0 2px 0; }
+            to { background-color: #FF0; }
+        }
+        @-moz-keyframes blinkYellow {
+            from { background-color: #FF0; }
+            50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #0e0e0e 0 2px 0; }
+            to { background-color: #FF0; }
+        }
+        @-ms-keyframes blinkYellow {
+            from { background-color: #FF0; }
+            50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #0e0e0e 0 2px 0; }
+            to { background-color: #FF0; }
+        }
+        @-o-keyframes blinkYellow {
+            from { background-color: #FF0; }
+            50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #0e0e0e 0 2px 0; }
+            to { background-color: #FF0; }
+        }
+        @keyframes blinkYellow {
+            from { background-color: #FF0; }
+            50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #0e0e0e 0 2px 0; }
+            to { background-color: #FF0; }
+        }
+
+
+        #notification::-webkit-scrollbar-track
+        {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
+        #notification::-webkit-scrollbar
+        {
+            width: 6px;
+            background-color: #F5F5F5;
+        }
+
+        #notification::-webkit-scrollbar-thumb
+        {
+            background-color: #2a3f54;
+        }
+
+
+    </style>
+@endsection
+
+@section('body')
+    <!-- page content -->
+
+
+    @if(Auth::id() == 1)
+
+        <div class="form-inline form-group">
+            <label>Select Company:</label>
+            <select name="company_id" class="form-control">
+                @foreach ($users as $key=>$user)
+                    @if($key > 0)
+                        <option value="{{ $user->id }}" @if($company_id == $user->id) selected @endif>{{ $user->name }}</option>
+                    @endif
+                @endforeach
+            </select>
+        </div>
+
+
+        <br>
+    @endif
+
+
+
+    <div class="panel-body col-lg-9 col-md-9 col-sm-9 col-xs-12" style="padding-top: 0px">
+        <table class="table table-bordered" style="background-color: white;">
+            <thead>
+            <tr>
+                <th style="width: 5%">#</th>
+
+                <th style="width: 13%">Zone</th>
+                <th style="width: 10%">Temperature</th>
+                <th style="width: 15%">Temperature Indicator</th>
+                <th style="width: 10%">Humidity</th>
+                <th style="width: 15%">Humidity Indicator</th>
+                <th style="width: 13%">Door</th>
+                <th style="width: 10%">Door Open Timer</th>
+                <th style="width: 14%">Last Updated</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            @foreach ($latest_details as $key=>$detail)
+                <div class-="row" >
+                    <div class="col-md-3"  style="padding:5px;">
+
+                    <div  style="background-color: {{$detail->color}};height:250px;width:290px;box-shadow: 10px 10px 50px rgba(0,0,0,.9);">
+                       <div class="row">
+                        <div class="col-md-9" style="background-color: ;">
+                            <div class="slot" id="{{$detail->name}}" data-behavior="drew 1" style="height:220px;width:220px;background-color:{{$detail->color}};border: 0px solid black;" > <h2 style=" text-shadow: 0px 2px 2px rgba(0,0,0,.9);text-align: center; vertical-align: middle;color:white;">{{$detail->name}}</h2>
+{{--                        <div class="slot2" id="{{$detail->name}}" data-behavior="drew 1" style="height:70px;width:70px;background-color:{{$detail->color}};border: 3px solid black;" >--}}
+                                @php
+
+                                    if($detail->door_opened_at === null){
+                                      $difference = "00:00:00";
+                                    }else{
+                                      $difference = time() - strtotime($detail->door_opened_at);
+                                    }
+
+                                @endphp
+
+
+
+
+                        </div>
+                            <h3 class="timer" value="{{ $difference }}" id="timer{{ $detail->device_code }}" style="margin-left:50px;margin-top:-40px;color:white;text-align: center;border:3px solid black; vertical-align: middle;">{{ gmdate("H:i:s", (int)$difference) }}</h3>
+
+{{--                            <h3 id="updated{{ $detail->device_code }}" style="margin-left:20px;color:white;font-size:18px;text-align: center; vertical-align: middle;">{{ date("Y/m/d h:i:sa", strtotime($detail->updated_at)) }}</h3>--}}
+                        </div>
+
+                           <div class="row" >
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+
+                                <div class="" id="{{$detail->name}}" data-behavior="drew 1" style="box-shadow: 10px 10px 50px rgba(0,0,0,.9);margin-top:5px;height:90px;width:90px;background-color:{{$detail->color}};margin-left:-38px;border:1px solid black;">
+                                    <div class="flex-center " id="humLed{{ $detail->device_code }}" style="margin-left:-7px;alignment:center;width:100px;height:20px;">
+
+                                        <div class="led led-green-off @if($detail->humidity <= $settings->min_hum) led-green-on @endif"> </div>
+                                        <div class="led led-yellow-off @if($detail->humidity > $settings->min_hum && $detail->humidity <= $settings->max_hum) led-yellow-blink @endif"></div>
+                                        <div class="led led-red-off @if($detail->humidity > $settings->max_hum) led-red-on @endif"></div>
+                                    </div>
+                                    <div style="color:white;font-size:23px;text-align: center; vertical-align: middle; font-weight: bold;"><span id="hum{{ $detail->device_code }}"><?php if($detail->humidity === NULL){ echo '-';}else{echo number_format($detail->humidity ,2).' %';} ?></span></div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3" style="margin-left:-25px;padding:5px">
+
+                                <div class="onoffswitch " style="width:80px;vertical-align: middle;margin-top:-10px">
+                                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="door{{ $detail->device_code }}" @if ($detail->door === 1) checked
+                                           @else unchecked
+                                        @endif>
+                                    <label class="onoffswitch-label" for="myonoffswitch">
+                                        <span class="onoffswitch-inner"></span>
+                                        <span class="onoffswitch-switch"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        </div>
+
+                    </div>
+
+                    </div>
+
+                </div>
+
+
+            @endforeach
+            @foreach ($latest_details as $key=>$detail)
+                <tr style="font-size: 15px; font-weight: 400; color: black;">
+
+                    <th style="text-align: center; vertical-align: middle; background-color: {{ $detail->color }}; color: white" scope="row">{{$key+1}}</th>
+
+                    <td style="text-align: center; vertical-align: middle;"><a href="{{ url('device/'.$detail->device_id) }}" title="Click to see all">{{$detail->name}}</a></td>
+
+                    <td style="text-align: center; vertical-align: middle; font-weight: bold;"><span id="temp{{ $detail->device_code }}"><?php if($detail->temperature === NULL){ echo '-';}else{echo number_format($detail->temperature ,2).' °C';}; ?></span></td>
+
+                    <td>
+
+
+                        <div class="flex-center" id="tempLed{{ $detail->device_code }}">
+
+
+
+                            <div class="led led-red-off @if($detail->temperature > $settings->max_temp) led-red-on @endif"></div>
+                            <div class="led led-yellow-off @if($detail->temperature > $settings->min_temp && $detail->temperature <= $settings->max_temp) led-yellow-blink @endif"></div>
+                            <div class="led led-red-off @if($detail->temperature > $settings->max_temp) led-red-on @endif"></div>
+                        </div>
+                    </td>
+
+                    <td style="text-align: center; vertical-align: middle; font-weight: bold;"><span id="hum{{ $detail->device_code }}"><?php if($detail->humidity === NULL){ echo '-';}else{echo number_format($detail->humidity ,2).' %';} ?></span></td>
+
+                    <td>
+
+                        <div class="flex-center" id="humLed{{ $detail->device_code }}">
+                            <div class="led led-green-off @if($detail->humidity <= $settings->min_hum) led-green-on @endif"></div>
+                            <div class="led led-yellow-off @if($detail->humidity > $settings->min_hum && $detail->humidity <= $settings->max_hum) led-yellow-blink @endif"></div>
+                            <div class="led led-red-off @if($detail->humidity > $settings->max_hum) led-red-on @endif"></div>
+                        </div>
+                    </td>
+
+                    <td style="text-align: center; vertical-align: middle;">
+
+                        <div class="onoffswitch">
+                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="door{{ $detail->device_code }}" @if ($detail->door === 1) checked
+                                   @else unchecked
+                                @endif
+                            >
+                            <label class="onoffswitch-label" for="myonoffswitch">
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+
+                    </td>
+
+                    @php
+
+                        if($detail->door_opened_at === null){
+                          $difference = "00:00:00";
+                        }else{
+                          $difference = time() - strtotime($detail->door_opened_at);
+                        }
+
+                    @endphp
+
+                    <td class="timer" value="{{ $difference }}" id="timer{{ $detail->device_code }}" style="text-align: center; vertical-align: middle;">{{ gmdate("H:i:s", (int)$difference) }}</td>
+
+                    <td id="updated{{ $detail->device_code }}" style="text-align: center; vertical-align: middle;">{{ date("Y/m/d h:i:sa", strtotime($detail->updated_at)) }}</td>
+                </tr>
+
+            @endforeach
+
+
+            </tbody>
+
+
+
+        </table>
+    </div>
+
+
+
+
+
+
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Notification<small></small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div id="notification" class="x_content bs-example-popovers" style="display: block;overflow-y: scroll;max-height: 75vh;">
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- /page content -->
+
+    <!-- footer content -->
+    <footer>
+        <div class="pull-right">
+
+        </div>
+        <div class="clearfix"></div>
+    </footer>
+    <!-- /footer content -->
+
+@endsection
+
+@section('javascript')
+
+
+    <script >
+        $( document ).ready( function() {
+            // Draw all slots
+            $('div.slot').each(function(i, d) {
+         console.log(d);
+                gauge(d.id);
+
+            });
+
+        });
+
+
+
+        var mark=[];
+            function gauge(googl) {
+
+
+
+
+            mark[googl] = Gauge(
+
+                    document.getElementById(googl),
+                    {
+                        min: -30,
+                        max: +10,
+                        dialStartAngle: 180,
+                        dialEndAngle: 0,
+                        value: 50,
+                        viewBox: "4 3 100 100",
+                        color: function (value) {
+                            if (value < -5) {
+                                return "#3AB062";
+                            } else if (value > 5) {
+                                return "#FF0000 ";
+
+                            } else {
+                                return "#3471EC ";
+                            }
+                        }
+                    }
+                );
+
+                mark[googl].setValueAnimated(-20, 1);
+}
+
+
+
+
+
+
+
+
+
+
+        var temp=10.5;
+
+
+
+        //print multiple chart with same data and options
+        var intervals = {};
+        var blinkIntervals = {};
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('a128c8f5559707e236ef', {
+            cluster: 'ap2',
+            forceTLS: true
+        });
+
+
+
+
+        var channel = pusher.subscribe('all-door-status');
+        // channel.bind('AllDoorStatus', function(data) {
+        //     alert(JSON.stringify(data));
+        //     console.log('sakil');
+        // });
+
+        // window.Echo.channel('all-door-status').listen('AllDoorStatus', (data) => {
+        //   if(data.notification == 1){
+
+        channel.bind('sakil-cms', function(data) {
+         gaugeUpdate(data);
+            if(data.notification == 1){
+
+                notification(data);
+            }
+
+            if(data.timer == 1){
+                intervals['timer'+data.device_code] = timer(0, 'timer'+data.device_code);
+            }
+            if(data.timer == 0){
+                clearInterval( intervals['timer'+data.device_code] );
+                $('#timer'+data.device_code).text('00:00:00');
+            }
+
+            $('#temp'+data.device_code).text(data.avgTemp.toFixed(2)+" °C");
+            $('#hum'+data.device_code).text(data.avgHum.toFixed(2)+" %");
+            $('#updated'+data.device_code).text(moment().format('Y/MM/DD hh:mm:ssa'));
+
+            $('#tempLed'+data.device_code).find('.led-green-off').removeClass("led-green-on");
+            $('#tempLed'+data.device_code).find('.led-yellow-off').removeClass("led-yellow-blink");
+            $('#tempLed'+data.device_code).find('.led-red-off').removeClass("led-red-on");
+
+            $('#humLed'+data.device_code).find('.led-green-off').removeClass("led-green-on");
+            $('#humLed'+data.device_code).find('.led-yellow-off').removeClass("led-yellow-blink");
+            $('#humLed'+data.device_code).find('.led-red-off').removeClass("led-red-on");
+
+            if(data.avgTemp <= @json($settings->min_temp)){
+                $('#tempLed'+data.device_code).find('.led-green-off').addClass("led-green-on");
+            }else if(data.avgTemp <= @json($settings->max_temp)){
+                $('#tempLed'+data.device_code).find('.led-yellow-off').addClass("led-yellow-blink");
+            }else{
+                $('#tempLed'+data.device_code).find('.led-red-off').addClass("led-red-on");
+            }
+
+            if(data.avgHum <= @json($settings->min_hum)){
+                $('#humLed'+data.device_code).find('.led-green-off').addClass("led-green-on");
+            }else if(data.avgHum <= @json($settings->max_hum)){
+                $('#humLed'+data.device_code).find('.led-yellow-off').addClass("led-yellow-blink");
+            }else{
+                $('#humLed'+data.device_code).find('.led-red-off').addClass("led-red-on");
+            }
+
+
+            var count = 1;
+            blinkIntervals[data.device_code] = setInterval(function() {
+                if (count % 2 == 0) {
+                    $('#temp'+data.device_code).fadeIn(100)
+                    $('#hum'+data.device_code).fadeIn(100);
+
+                    if (count == 4) {
+                        clearInterval(blinkIntervals[data.device_code]);
+                    }
+                } else {
+                    $('#temp'+data.device_code).fadeOut(100)
+                    $('#hum'+data.device_code).fadeOut(100);
+                }
+                count++;
+            }, 200);
+
+
+        });
+
+        // (function loop(data) {
+        //      var value1 = Math.random() * 100;
+        //
+        //
+        //
+        //
+        //
+        //     window.setTimeout(loop, 1000);
+        // })();
+        // gauge2.setValueAnimated(50-temp, 1);
+
+        function notification(data){
+
+            var door = 'Open';
+            if(data.door == 0){
+                door = 'Close';
+                $('#door'+data.device_code).prop('checked', false);
+            }else{
+                $('#door'+data.device_code).prop('checked', true);
+            }
+            if($("#door" + data.device_code).length != 0) {
+                $( "#notification" ).prepend( $( '<div style="background-color:'+data.device_color+'" class="alert alert-success alert-dismissible fade in" role="alert"><strong>'+data.device_name+'</strong>\'s door is <strong>'+door+'</strong> at '+moment().format('MMMM Do YYYY, h:mm:ss a')+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button></div>' ) );
+            }
+
+        }
+
+
+        $( document ).ready(function() {
+            $( "td.timer" ).each(function( index ) {
+                if($(this).text() != '00:00:00'){
+                    intervals[$(this).attr('id')] = timer($(this).attr('value'), $(this).attr('id'));
+
+                }
+            });
+        });
+
+        function gaugeUpdate(data) {
+            mark[data.device_name].setValueAnimated(data.avgTemp, 1);
+            console.log(data.device_name);
+        }
+
+
+        function timer(duration, display) {
+            var timer = duration, hours, minutes, seconds;
+            return setInterval(function () {
+                hours = parseInt(timer / 3600, 10);
+                minutes = parseInt(parseInt(timer % 3600, 10) / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                hours = hours < 10 ? "0" + hours : hours;
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                $('#'+display).text(hours + ":" + minutes + ":" + seconds);
+
+                timer++;
+
+
+
+
+
+            }, 1000);
+        }
+
+
+        $("[name=company_id]").change(function () {
+            location.href = "{{ url('/company') }}/"+this.value;
+        });
+
+
+
+
+
+    </script>
+
+@endsection
